@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Series Explorer</string>
+    <string name="loading">Cargando...</string>
+    <string name="error_data">Error al cargar los datos</string>
+    <string name="empty_shows">No se encontraron series</string>
+    <string name="empty_episodes">No hay episodios disponibles</string>
+    <string name="episodes_label">Episodios</string>
+    <string name="retry">Reintentar</string>
+    <string name="no_internet">Sin conexión a internet</string>
+    <string name="server_error">Error en el servidor (%1$d)</string>
+    <string name="unknown_error">Error desconocido</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/showListFragment">
+
+    <fragment
+        android:id="@+id/showListFragment"
+        android:name="com.example.seriesexplorer.ui.list.ShowListFragment"
+        android:label="Series Explorer"
+        tools:layout="@layout/fragment_show_list">
+        <action
+            android:id="@+id/action_showListFragment_to_showDetailFragment"
+            app:destination="@id/showDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/showDetailFragment"
+        android:name="com.example.seriesexplorer.ui.detail.ShowDetailFragment"
+        android:label="Show Detail"
+        tools:layout="@layout/fragment_show_detail">
+        <argument
+            android:name="showId"
+            app:argType="integer" />
+    </fragment>
+</navigation>
