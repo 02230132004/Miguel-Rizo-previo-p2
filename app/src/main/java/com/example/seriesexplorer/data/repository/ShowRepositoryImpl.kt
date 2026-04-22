@@ -36,60 +36,38 @@ class ShowRepositoryImpl @Inject constructor(
             showDao.insertShows(entities)
             emit(ResultWrapper.Success(entities.map { it.toDomain() }))
         } catch (e: Exception) {
-            showDao.getAllShows().collect { localShows ->
-                if (localShows.isNotEmpty()) {
-                    emit(ResultWrapper.Success(localShows.map { it.toDomain() }))
-                } else {
-                    emit(ResultWrapper.Error(handleError(e)))
-                }
-            }
+            // Requerimiento: Si no hay internet, no mostrar nada y dar error
+            emit(ResultWrapper.Error(handleError(e)))
         }
     }
 
     override fun getShowDetail(id: Int): Flow<ResultWrapper<Pair<Show, List<Episode>>>> = flow {
         emit(ResultWrapper.Loading)
 
-        val localShow = showDao.getShowById(id)
-        val localEpisodes = episodeDao.getEpisodesByShowId(id)
-        
-        // Cache is valid ONLY if we have both show AND episodes, and TTL is not expired
-        val isCacheValid = localShow != null && 
-                          localEpisodes.isNotEmpty() && 
-                          (System.currentTimeMillis() - localShow.lastUpdated) < cacheTtl
-
-        if (isCacheValid) {
-            emit(ResultWrapper.Success(Pair(localShow!!.toDomain(), localEpisodes.map { it.toDomain() })))
-        } else {
-            try {
-                val showDto = tvMazeService.getShowDetail(id)
-                val episodesDto = tvMazeService.getEpisodesByShow(id)
-                
-                var countryFlag: String? = localShow?.countryFlag
-                
-                if (showDto.network?.country?.name != null && (countryFlag == null || countryFlag.isEmpty())) {
-                    try {
-                        val countryInfo = countriesService.getCountryByName(showDto.network.country.name)
-                        countryFlag = countryInfo.firstOrNull()?.flags?.png
-                    } catch (e: Exception) {
-                        // Ignore country error
-                    }
-                }
-
-                val showEntity = showDto.toEntity(countryFlag)
-                val episodeEntities = episodesDto.map { it.toEntity(id) }
-
-                showDao.insertShow(showEntity)
-                episodeDao.deleteEpisodesByShowId(id)
-                episodeDao.insertEpisodes(episodeEntities)
-
-                emit(ResultWrapper.Success(Pair(showEntity.toDomain(), episodeEntities.map { it.toDomain() })))
-            } catch (e: Exception) {
-                if (localShow != null) {
-                    emit(ResultWrapper.Success(Pair(localShow.toDomain(), localEpisodes.map { it.toDomain() })))
-                } else {
-                    emit(ResultWrapper.Error(handleError(e)))
-                }
+        try {
+            val showDto = tvMazeService.getShowDetail(id)
+            val episodesDto = tvMazeService.getEpisodesByShow(id)
+            
+            var countryFlag: String? = null
+            
+            if (showDto.network?.country?.name != null) {
+                try {
+                    val countryInfo = countriesService.getCountryByName(showDto.network.country.name)
+                    countryFlag = countryInfo.firstOrNull()?.flags?.png
+                } catch (e: Exception) {}
             }
+
+            val showEntity = showDto.toEntity(countryFlag)
+            val episodeEntities = episodesDto.map { it.toEntity(id) }
+
+            showDao.insertShow(showEntity)
+            episodeDao.deleteEpisodesByShowId(id)
+            episodeDao.insertEpisodes(episodeEntities)
+
+            emit(ResultWrapper.Success(Pair(showEntity.toDomain(), episodeEntities.map { it.toDomain() })))
+        } catch (e: Exception) {
+            // Requerimiento: Si no hay internet, no mostrar nada y dar error
+            emit(ResultWrapper.Error(handleError(e)))
         }
     }
 
