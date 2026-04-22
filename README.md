@@ -150,6 +150,7 @@ Se incluyen:
 * Para simular error: desactivar internet
 * Para validar caché: abrir app varias veces dentro de 15 minutos
 * Revisar Logcat para consumo de APIs
+* logcat 
 
 ---
 
