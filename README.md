@@ -125,17 +125,11 @@ Se incluyen:
 
 ## ⚙️ Instalación y ejecución
 
-1. Clonar el repositorio:
-
-```bash
-git clone https://github.com/tuusuario/series-explorer.git
-```
-
-2. Abrir en Android Studio
-
-3. Sincronizar Gradle
-
-4. Ejecutar en emulador o dispositivo físico
+1.Clonar el repositorio:
+ git clone https://github.com/02230132004/Miguel-Rizo-previo-p2.git
+2.Abrir el proyecto en Android Studio.
+3.Sincronizar Gradle automáticamente.
+4.Ejecutar la aplicación en un emulador o dispositivo físico.
 
 ---
 
